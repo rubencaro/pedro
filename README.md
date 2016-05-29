@@ -17,6 +17,8 @@ Notification requests are signed. Notification querying is too.
 
 Pedro uses `Phoenix` to get web services, such as the notification reception and the inbox/dashboard reading.
 
+`Cipher` to sign requests.
+
 It uses `Mnesia` to persist data.
 
 It uses `Bottler`/`Harakiri` for deploying tasks.
