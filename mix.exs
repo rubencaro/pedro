@@ -3,7 +3,7 @@ defmodule Pedro.Mixfile do
 
   def project do
     [app: :pedro,
-     version: "0.0.1",
+     version: get_version_number,
      elixir: "~> 1.0",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -31,6 +31,14 @@ defmodule Pedro.Mixfile do
     [{:phoenix, "~> 1.1.4"},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
+     {:bottler, github: "rubencaro/bottler"},
      {:harakiri, ">= 1.0.0"}]
+  end
+
+  defp get_version_number do
+    commit = :os.cmd('git rev-parse --short HEAD') |> to_string |> String.rstrip(?\n)
+    v = "0.1.0+#{commit}"
+    if Mix.env == :dev, do: v = v <> "dev"
+    v
   end
 end
