@@ -17,7 +17,7 @@ defmodule Pedro.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Pedro, []},
-     applications: [:phoenix, :cowboy, :logger, :gettext]]
+     applications: [:phoenix, :cowboy, :logger, :gettext, :harakiri]]
   end
 
   # Specifies which paths to compile per environment.
@@ -30,6 +30,7 @@ defmodule Pedro.Mixfile do
   defp deps do
     [{:phoenix, "~> 1.1.4"},
      {:gettext, "~> 0.9"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:harakiri, ">= 1.0.0"}]
   end
 end

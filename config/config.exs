@@ -10,7 +10,7 @@ config :pedro, Pedro.Endpoint,
   url: [host: "localhost"],
   root: Path.dirname(__DIR__),
   secret_key_base: "LD9PWAP5gVenCU39R59vc6LcK5OE6ZSCmuPTfnyIZwNFLisPQlcNfU1jF9kC38eO",
-  render_errors: [accepts: ~w(json)],
+  render_errors: [accepts: ~w(html json)],
   pubsub: [name: Pedro.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
