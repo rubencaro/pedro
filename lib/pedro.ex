@@ -13,6 +13,8 @@ defmodule Pedro do
     Harakiri.add %{ paths: ["#{tmp_path}/restart"],
                     action: :restart }, create_paths: true
 
+    :ok = Pedro.Mnesia.init
+
     children = [
       # Start the endpoint when the application starts
       supervisor(Pedro.Endpoint, []),
