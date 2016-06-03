@@ -1,0 +1,66 @@
+# render: dot -O -Tpng plan.dot
+# auto-render: https://gist.github.com/rubencaro/75e7b163665b47e0094a
+digraph plan {
+  # layout=neato;
+  # splines=true;
+  overlap=false;
+  rankdir="LR";
+  node [shape=box];
+
+  # admin
+  subgraph admin{
+    node [style=filled,fillcolor="#ff000022"];
+    Endpoint;
+    {rank=same; Endpoint;}
+    {
+      node [shape=Mrecord];
+      Endpoint -> RequestController, QueryController;
+    }
+  }
+
+  # dispatch
+  subgraph dispatch{
+    node [style=filled,fillcolor="#ffff0022"];
+    {rank=same; Dispatcher;}
+    {
+      node [shape=Mrecord];
+      Dispatcher -> Adapter;
+      # adapters
+      subgraph cluster_adapters{
+        node [style=filled,fillcolor="#00ffff22"];
+        label="Adapter Types";
+        SlackAdapter, TelegramAdapter, EmailAdapter, URLAdapter;
+      }
+      Adapter -> SlackAdapter, TelegramAdapter, EmailAdapter, URLAdapter;
+    }
+  }
+
+  # db
+  { node [color=gray,fillcolor=gray95,style=filled];
+    Envelopes [shape=Mrecord, label="Envelopes |
+    \{\"id\":\"12346789\",\n
+    \"received_ts\":\"12346789\",\n
+    \"target_ts\":\"12346789\",\n
+    \"deliver_ts\":12346789,\n
+    \"adapter\":\"xxxAdapter\",\n
+    \"options\":\{ ... \},\n
+    \"payload\":\{ ... \} \}"];
+  }
+
+  # DB actions
+  { # read
+    edge [style=dashed,dir=back,color="#00aa0055"];
+    QueryController, Adapter -> Envelopes;
+  }
+  { # write
+    edge [style=dashed,color="#0000ff33"];
+    RequestController -> Envelopes;
+  }
+
+  {rank=same; Dispatcher, Endpoint, AliveLoop, Envelopes;}
+
+  {rank=same; Pedro -> Mnesia -> Harakiri -> Logger [dir=none,style=dotted];}
+
+  Pedro -> AliveLoop, Endpoint, Dispatcher;
+  Mnesia -> Envelopes;
+}
