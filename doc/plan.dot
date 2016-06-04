@@ -14,53 +14,75 @@ digraph plan {
     {rank=same; Endpoint;}
     {
       node [shape=Mrecord];
-      Endpoint -> RequestController, QueryController;
+      Endpoint -> RequestController, InboxController;
     }
   }
 
   # dispatch
   subgraph dispatch{
     node [style=filled,fillcolor="#ffff0022"];
-    {rank=same; Dispatcher;}
+    DispatcherPool;
+    Dispatcher [shape=record,label="<1>Dispatcher 1|...|<n>Dispatcher N"];
+    DispatcherPool -> Dispatcher:1, Dispatcher:n;
     {
       node [shape=Mrecord];
-      Dispatcher -> Adapter;
+      ThrottleControl;
+      Dispatcher:1, Dispatcher:n -> Adapter;
       # adapters
       subgraph cluster_adapters{
         node [style=filled,fillcolor="#00ffff22"];
         label="Adapter Types";
-        SlackAdapter, TelegramAdapter, EmailAdapter, URLAdapter;
+        SlackAdapter, TelegramAdapter, EmailAdapter, URLAdapter, InboxAdapter;
       }
-      Adapter -> SlackAdapter, TelegramAdapter, EmailAdapter, URLAdapter;
+      Adapter -> SlackAdapter, TelegramAdapter, EmailAdapter, URLAdapter, InboxAdapter;
     }
+    {rank="same"; Adapter -> ThrottleControl [dir=none,style=dotted];}
   }
 
   # db
   { node [color=gray,fillcolor=gray95,style=filled];
-    Envelopes [shape=Mrecord, label="Envelopes |
+    EntryQueue [shape=Mrecord, label="EntryQueue |
+    \{\"id\":\"12346789\",\n
+    \"received_ts\":\"12346789\",\n
+    \"target_ts\":\"12346789\",\n
+    \"adapter\":\"xxxAdapter\",\n
+    \"options\":\{ ... \},\n
+    \"json_payload\":\{ ... \} \}"];
+  }
+  { node [color=gray,fillcolor=gray95,style=filled];
+    Messages [shape=Mrecord, label="Messages |
     \{\"id\":\"12346789\",\n
     \"received_ts\":\"12346789\",\n
     \"target_ts\":\"12346789\",\n
     \"deliver_ts\":12346789,\n
-    \"adapter\":\"xxxAdapter\",\n
-    \"options\":\{ ... \},\n
-    \"payload\":\{ ... \} \}"];
+    \"json_payload\":\{ ... \} \}"];
+  }
+  { node [color=gray,fillcolor=gray95,style=filled];
+    Throttles [shape=Mrecord, label="Throttles |
+    \{\"key\":\"12346789\",\n
+    \"since_ts\":\"12346789\",\n
+    \"consumed\":\"12346789\",\n
+    \"period\":12346789"];
   }
 
   # DB actions
   { # read
     edge [style=dashed,dir=back,color="#00aa0055"];
-    QueryController, Adapter -> Envelopes;
+    InboxController -> Messages;
+    Adapter -> EntryQueue;
+    ThrottleControl -> Throttles;
   }
   { # write
     edge [style=dashed,color="#0000ff33"];
-    RequestController -> Envelopes;
+    RequestController -> EntryQueue;
+    ThrottleControl -> Throttles;
+    InboxController, InboxAdapter -> Messages;
   }
 
-  {rank=same; Dispatcher, Endpoint, AliveLoop, Envelopes;}
+  {rank=same; DispatcherPool, Endpoint, AliveLoop, EntryQueue, Throttles, Messages;}
 
   {rank=same; Pedro -> Mnesia -> Harakiri -> Logger [dir=none,style=dotted];}
 
-  Pedro -> AliveLoop, Endpoint, Dispatcher;
-  Mnesia -> Envelopes;
+  Pedro -> AliveLoop, Endpoint, DispatcherPool;
+  Mnesia -> EntryQueue, Throttles, Messages;
 }
