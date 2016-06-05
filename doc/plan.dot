@@ -21,9 +21,13 @@ digraph plan {
   # dispatch
   subgraph dispatch{
     node [style=filled,fillcolor="#ffff0022"];
-    DispatcherPool;
+    DispatcherPoolSupervisor -> DispatcherPool:1, DispatcherPool:n;
+
+    DispatcherPool [shape=record,label="<1>DispatcherPool 1|...|<n>DispatcherPool N"];
     Dispatcher [shape=record,label="<1>Dispatcher 1|...|<n>Dispatcher N"];
-    DispatcherPool -> Dispatcher:1, Dispatcher:n;
+
+    DispatcherPool:1 -> Dispatcher:1, Dispatcher:n;
+
     {
       node [shape=Mrecord];
       ThrottleControl;
@@ -36,7 +40,7 @@ digraph plan {
       }
       Adapter -> SlackAdapter, TelegramAdapter, EmailAdapter, URLAdapter, InboxAdapter;
     }
-    {rank="same"; Adapter -> ThrottleControl [dir=none,style=dotted];}
+    Adapter -> ThrottleControl, DispatcherPool [dir=none,style=dotted];
   }
 
   # db
@@ -59,7 +63,7 @@ digraph plan {
   }
   { node [color=gray,fillcolor=gray95,style=filled];
     Throttles [shape=Mrecord, label="Throttles |
-    \{\"key\":\"12346789\",\n
+    \{\"key\":\"adapter_A_account_B\",\n
     \"since_ts\":\"12346789\",\n
     \"consumed\":\"12346789\",\n
     \"period\":12346789"];
@@ -79,10 +83,31 @@ digraph plan {
     InboxController, InboxAdapter -> Messages;
   }
 
-  {rank=same; DispatcherPool, Endpoint, AliveLoop, EntryQueue, Throttles, Messages;}
+  # Notes
+  {
+    node [shape=none];
+    edge [dir=none,style=dashed,color=gray];
+
+    Note1 [label="One DispatcherPool\nfor each combination\nof Adapter and Account"];
+    {rank=same; Note1 -> DispatcherPool;}
+
+    Note2 [label="One Throttle entry\nfor each DispatcherPool"];
+    Note2 -> ThrottleControl;
+    {rank=same; Note2, Dispatcher;}
+
+    Note3 [label="The Adapter code\ndetermines how many\nDispatchers in the pool."];
+    {rank=same; Note3 -> Dispatcher;}
+
+    Note4 [label="The Adapter code implements\none of the Adapter Types.\nIt tells how to configure\nthe DispatcherPool,\nhow to configure Throttle,\nand provides helpers to interact\nwith the implemented service."];
+    {rank=same; Note4 -> Adapter;}
+  }
+
+  {rank=same; DispatcherPoolSupervisor, Endpoint, AliveLoop, EntryQueue, Throttles, Messages;}
 
   {rank=same; Pedro -> Mnesia -> Harakiri -> Logger [dir=none,style=dotted];}
 
-  Pedro -> AliveLoop, Endpoint, DispatcherPool;
+  {rank=same; ThrottleControl, DispatcherPool;}
+
+  Pedro -> AliveLoop, Endpoint, DispatcherPoolSupervisor;
   Mnesia -> EntryQueue, Throttles, Messages;
 }
