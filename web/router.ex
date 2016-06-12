@@ -9,12 +9,13 @@ defmodule Pedro.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/" do
+  scope "/", Pedro  do
     pipe_through :browser
-    get "/ping", Pedro.PingController, :ping
+    get "/ping", PingController, :ping
   end
 
   scope "/api", Pedro do
     pipe_through :api
+    post "/request", RequestController, :request
   end
 end
