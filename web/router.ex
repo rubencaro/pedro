@@ -1,21 +1,23 @@
 defmodule Pedro.Router do
   use Pedro.Web, :router
 
-  pipeline :browser do
-    plug :accepts, ["html"]
+  pipeline :open do
+    plug :accepts, ["html","json"]
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
+  pipeline :signed do
+    plug :accepts, ["html","json"]
+    plug Pedro.ValidateSignature
   end
 
-  scope "/", Pedro  do
-    pipe_through :browser
+  scope "/", Pedro do
+    pipe_through :open
     get "/ping", PingController, :ping
   end
 
-  scope "/api", Pedro do
-    pipe_through :api
+  scope "/", Pedro do
+    pipe_through :signed
+    get "/request", RequestController, :request
     post "/request", RequestController, :request
   end
 end
