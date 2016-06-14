@@ -17,7 +17,7 @@ defmodule Pedro.Router do
 
   scope "/", Pedro do
     pipe_through :signed
-    get "/request", RequestController, :request
     post "/request", RequestController, :request
+    get "/request", RequestController, :request
   end
 end
