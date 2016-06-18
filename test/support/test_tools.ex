@@ -13,7 +13,7 @@ defmodule Pedro.TestTools do
   """
 
   defmacro assert_valid_json(conn) do
-    quote location: :keep do
+    quote do
       data = json_response(unquote(conn), 200)
       assert %{"valid" => true} = data
       data
@@ -24,13 +24,26 @@ defmodule Pedro.TestTools do
   `get` with the appropriate sigature from `Cipher`
   """
   defmacro signed_get(conn, url) do
-    quote location: :keep do
+    quote do
       get unquote(conn), Cipher.sign_url(unquote(url))
     end
   end
   defmacro signed_get(conn, path, data) do
-    quote location: :keep do
+    quote do
       signed_get(unquote(conn), "#{unquote(path)}?#{URI.encode_query(unquote(data))}")
+    end
+  end
+
+  @doc """
+  `post` of JSON body with the appropriate sigature from `Cipher`
+  """
+  defmacro signed_post(conn, url, data) do
+    quote do
+      input = unquote(data)
+      signed_url = Cipher.sign_url_from_mapped_body(unquote(url), input)
+      conn = unquote(conn)
+      |> put_req_header("content-type", "application/json")
+      |> post(signed_url, Poison.encode!(input))
     end
   end
 
@@ -40,7 +53,7 @@ defmodule Pedro.TestTools do
   No data should be left on the database, and test should be able to run parallel.
   """
   defmacro in_test_transaction(do: block) do
-    quote location: :keep do
+    quote do
       # an `Agent` unique for this <pid>_in_test_transaction
       pid = self |> :erlang.pid_to_list |> to_string
       agent = "#{pid}_in_test_transaction" |> String.to_atom

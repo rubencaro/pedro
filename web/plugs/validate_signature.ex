@@ -8,16 +8,15 @@ defmodule Pedro.ValidateSignature do
   def call(conn, opts \\ []) do
     url = "#{conn.request_path}?#{conn.query_string}"
 
-    H.spit conn
-    H.spit conn.method
-
     validation = case conn.method do
-      "POST" -> Cipher.validate_signed_body(url)
       "GET"  -> Cipher.validate_signed_url(url)
+
+      # here body is already parsed by `Plug.Parsers`
+      # hence we need the signature to be done using `Cipher.sign_url_from_mapped_body`
+      "POST" -> Cipher.validate_signed_body(url, conn.body_params)
+
       any -> Cipher.validate_signed_url(url)
     end
-
-    H.spit validation
 
     case validation do
       {:ok, _} -> conn
