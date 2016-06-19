@@ -24,6 +24,8 @@ defmodule Pedro.RequestControllerTest do
       data = assert_valid_json(conn)
       assert %{"valid" => true, "request" => %{"WIP" => true, "message" => "work in progress"}} = data
 
+      :mnesia.all_keys(Pedro.EntryQueue) |> inspect |> H.spit
+
       H.todo "Test actual db interaction"
     end
   end

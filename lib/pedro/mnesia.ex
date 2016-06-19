@@ -6,6 +6,8 @@ defmodule Pedro.Mnesia do
   Helpers to interact with Mnesia in single node mode.
   """
 
+  @tables [Pedro.Mnesia.EntryQueue, Pedro.Mnesia.Messages, Pedro.Mnesia.Throttles]
+
   @doc """
   create_schema and then start Mnesia in single node mode
 
@@ -30,7 +32,9 @@ defmodule Pedro.Mnesia do
 
   defp create_all_tables(:ok) do
 
-    results = tables_definition |> Enum.map(&create_table/1)
+    results = @tables
+      |> Enum.map(&(apply(&1, :table_definition, [])))
+      |> Enum.map(&create_table/1)
 
     case Enum.all?(results, &(match?(:ok,&1))) do
       true -> :ok
@@ -45,17 +49,13 @@ defmodule Pedro.Mnesia do
       |> H.defaults(disc_copies: [node()])
 
     case :mnesia.create_table(name, opts) do
-      {:ok, :atomic} -> :ok
+      {:atomic, :ok} -> :ok
       {:aborted, {:already_exists, _}} -> :ok
       {:aborted, reason} -> {:error, reason}
     end
   end
 
-  defp tables_definition do
-    [
-      [name: Pedro.EntryQueue, opts: [attributes: [:id, :received_ts, :target_ts, :adapter, :options, :json_payload]]],
-      [name: Pedro.Messages,   opts: [attributes: [:id, :received_ts, :target_ts, :deliver_ts, :json_payload]]],
-      [name: Pedro.Throttles,  opts: [attributes: [:key, :since_ts, :consumed, :period]]]
-    ]
+  def read(table, key) do
+    :mnesia.read({table, key})
   end
 end
