@@ -11,7 +11,7 @@ defmodule Pedro do
     Harakiri.add %{ paths: ["#{tmp_path}/restart"],
                     action: :restart }, create_paths: true
 
-    :ok = Pedro.Mnesia.init
+    :ok = Pedro.Db.init
 
     children = [
       supervisor(Pedro.Endpoint, []),

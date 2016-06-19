@@ -1,12 +1,12 @@
 require Pedro.Helpers, as: H
 
-defmodule Pedro.Mnesia do
+defmodule Pedro.Db do
 
   @moduledoc """
   Helpers to interact with Mnesia in single node mode.
   """
 
-  @tables [Pedro.Mnesia.EntryQueue, Pedro.Mnesia.Messages, Pedro.Mnesia.Throttles]
+  @tables [Pedro.Db.EntryQueue, Pedro.Db.Messages, Pedro.Db.Throttles]
 
   @doc """
   create_schema and then start Mnesia in single node mode
@@ -31,7 +31,6 @@ defmodule Pedro.Mnesia do
   defp start_mnesia(any), do: any  # error piping
 
   defp create_all_tables(:ok) do
-
     results = @tables
       |> Enum.map(&(apply(&1, :table_definition, [])))
       |> Enum.map(&create_table/1)
