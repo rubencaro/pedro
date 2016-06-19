@@ -33,8 +33,7 @@ defmodule Pedro.Mixfile do
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
      {:bottler, github: "rubencaro/bottler"},
-     {:cipher, github: "rubencaro/cipher"},
-    #  {:cipher, ">= 1.0.0"},
+     {:cipher, ">= 1.1.0"},
      {:harakiri, ">= 1.0.0"}]
   end
 

@@ -1,5 +1,5 @@
 %{"bottler": {:git, "https://github.com/rubencaro/bottler.git", "33c24dc214a4d779d9811d3cfb858254c686e4dc", []},
-  "cipher": {:git, "https://github.com/rubencaro/cipher.git", "2b8fbb8f91e54b4399fb576caa836d61d3badf40", []},
+  "cipher": {:hex, :cipher, "1.1.0", "f0ddba67786d1ddb67d88b814f66b1a0aa2b4b76d079784f2a90d80103ffac15", [:mix], [{:poison, "~> 2.0", [hex: :poison, optional: false]}]},
   "cowboy": {:hex, :cowboy, "1.0.4", "a324a8df9f2316c833a470d918aaf73ae894278b8aa6226ce7a9bf699388f878", [:rebar, :make], [{:cowlib, "~> 1.0.0", [hex: :cowlib, optional: false]}, {:ranch, "~> 1.0", [hex: :ranch, optional: false]}]},
   "cowlib": {:hex, :cowlib, "1.0.2", "9d769a1d062c9c3ac753096f868ca121e2730b9a377de23dec0f7e08b1df84ee", [:make], []},
   "csv": {:hex, :csv, "1.4.1", "8b3a3bc9350ba04532f452c607aa24d59de03a36a2838b1ea17c274646e2f3d5", [:mix], [{:parallel_stream, "~> 1.0.3", [hex: :parallel_stream, optional: false]}]},

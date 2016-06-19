@@ -9,7 +9,7 @@ defmodule Pedro.Router do
 
   pipeline :signed do
     plug :accepts, ["html","json"]
-    plug Pedro.ValidateSignature, error_fun: &Pedro.Router.log_validation_error/2
+    plug Cipher.ValidatePlug, error_callback: &Pedro.Router.log_validation_error/2
   end
 
   scope "/", Pedro do
