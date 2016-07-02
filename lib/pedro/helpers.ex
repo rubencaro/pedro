@@ -23,7 +23,10 @@ defmodule Pedro.Helpers do
                 :normal, "\n     #{inspect self}", :green," #{name}"]
 
       msg = inspect(unquote(obj),unquote(inspect_opts))
-      if String.length(msg) > 2, do: chain = chain ++ [:red, "\n\n#{msg}"]
+
+      chain = if String.length(msg) > 2,
+        do: chain ++ [:red, "\n\n#{msg}"],
+        else: chain
 
       # chain = chain ++ [:yellow, "\n\n#{inspect Process.info(self)}"]
 

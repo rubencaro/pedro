@@ -17,7 +17,7 @@ defmodule Pedro.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Pedro, []},
-     applications: [:phoenix, :cowboy, :logger, :gettext, :harakiri],
+     applications: [:phoenix, :phoenix_pubsub, :cowboy, :logger, :gettext, :harakiri],
      included_applications: [:mnesia]]
   end
 
@@ -29,18 +29,20 @@ defmodule Pedro.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.1.4"},
+    [{:phoenix, "~> 1.2"},
+     {:phoenix_pubsub, "~> 1.0"},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
      {:bottler, github: "rubencaro/bottler"},
-     {:cipher, ">= 1.1.0"},
-     {:harakiri, ">= 1.0.0"}]
+     {:cipher, ">= 1.1.2"},
+     {:harakiri, ">= 1.0.2"}]
   end
 
   defp get_version_number do
     commit = :os.cmd('git rev-parse --short HEAD') |> to_string |> String.rstrip(?\n)
     v = "0.1.0+#{commit}"
-    if Mix.env == :dev, do: v = v <> "dev"
-    v
+    if Mix.env == :dev,
+      do: v <> "dev",
+      else: v
   end
 end
