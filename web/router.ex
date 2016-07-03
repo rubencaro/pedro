@@ -1,4 +1,3 @@
-require Pedro.Helpers, as: H  # the cool way
 
 defmodule Pedro.Router do
   use Pedro.Web, :router
@@ -9,7 +8,7 @@ defmodule Pedro.Router do
 
   pipeline :signed do
     plug :accepts, ["html","json"]
-    plug Cipher.ValidatePlug, error_callback: &Pedro.Router.log_validation_error/2
+    plug Cipher.ValidatePlug #, error_callback: &Pedro.Router.log_validation_error/2
   end
 
   scope "/", Pedro do
@@ -23,7 +22,8 @@ defmodule Pedro.Router do
     get "/request", RequestController, :request
   end
 
-  def log_validation_error(conn, error) do
-    H.spit(error)
-  end
+  # def log_validation_error(conn, error) do
+  #   require Pedro.Helpers, as: H  # the cool way
+  #   H.spit(error)
+  # end
 end

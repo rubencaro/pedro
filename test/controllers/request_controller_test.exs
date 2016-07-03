@@ -20,11 +20,12 @@ defmodule Pedro.RequestControllerTest do
     in_test_transaction do
       input = %{WIP: true, message: "work in progress"}
 
+
       conn = signed_post build_conn(), "/request", input
       data = assert_valid_json(conn)
       assert %{"valid" => true, "request" => %{"WIP" => true, "message" => "work in progress"}} = data
 
-      :mnesia.all_keys(Pedro.EntryQueue) |> inspect |> H.spit
+      H.spit :mnesia.all_keys(Pedro.Db.EntryQueue)
 
       H.todo "Test actual db interaction"
     end
