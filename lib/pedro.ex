@@ -15,6 +15,7 @@ defmodule Pedro do
 
     children = [
       supervisor(Pedro.Endpoint, []),
+      supervisor(Pedro.Dispatcher.PoolSupervisor, []),
       worker(Task, [Pedro, :alive_loop, [[name: Pedro.AliveLoop]]])
     ]
 

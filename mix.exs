@@ -35,7 +35,8 @@ defmodule Pedro.Mixfile do
      {:cowboy, "~> 1.0"},
      {:bottler, github: "rubencaro/bottler"},
      {:cipher, ">= 1.1.2"},
-     {:harakiri, ">= 1.0.2"}]
+     {:harakiri, ">= 1.0.2"},
+     {:poolboy, "~> 1.5"}]
   end
 
   defp get_version_number do

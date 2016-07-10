@@ -1,4 +1,3 @@
-require Pedro.Helpers, as: H  # the cool way
 require Logger
 
 defmodule Pedro.RequestController do

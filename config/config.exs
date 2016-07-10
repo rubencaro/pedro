@@ -13,6 +13,12 @@ config :pedro, Pedro.Endpoint,
   pubsub: [name: Pedro.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :pedro,
+  dispatcher: [pools: [[worker_opts: [adapter: Pedro.Adapter],
+                        pool_opts: [name: {:local, Pedro.Dispatcher.Pool1},
+                                    size: 5,
+                                    max_overflow: 10]]]]
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

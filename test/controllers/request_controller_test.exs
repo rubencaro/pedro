@@ -1,4 +1,3 @@
-require Pedro.Helpers, as: H  # the cool way
 alias Pedro.Db.EntryQueue, as: EQ
 
 defmodule Pedro.RequestControllerTest do
@@ -7,8 +6,8 @@ defmodule Pedro.RequestControllerTest do
 
   test "POST /request validates signature" do
     conn = build_conn()
-    |> put_req_header("content-type", "application/json")
-    |> post("/request", Poison.encode!(%{any: "thing"}))
+      |> put_req_header("content-type", "application/json")
+      |> post("/request", Poison.encode!(%{any: "thing"}))
     assert response(conn, 401) == "unauthorized"
   end
 
