@@ -96,4 +96,18 @@ defmodule Pedro.Helpers do
     end
     args # chainable
   end
+
+  @doc """
+    Get timestamp in seconds, microseconds, or nanoseconds
+  """
+  def ts(scale \\ :seconds) do
+    {mega, sec, micro} = :os.timestamp
+    t = mega * 1_000_000 + sec
+    case scale do
+      :seconds -> t
+      :micro -> t * 1_000_000 + micro
+      :nano -> (t * 1_000_000 + micro) * 1_000
+    end
+  end
+
 end

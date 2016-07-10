@@ -1,4 +1,5 @@
 require Pedro.Helpers, as: H  # the cool way
+alias Pedro.Db.EntryQueue, as: EQ
 
 defmodule Pedro.RequestControllerTest do
   use Pedro.ConnCase, async: true
@@ -19,27 +20,28 @@ defmodule Pedro.RequestControllerTest do
   test "POST /request" do
     in_test_transaction do
       input = %{WIP: true, message: "work in progress"}
-
+      deserialized_input = input |> Poison.encode! |> Poison.decode!
 
       conn = signed_post build_conn(), "/request", input
       data = assert_valid_json(conn)
-      assert %{"valid" => true, "request" => %{"WIP" => true, "message" => "work in progress"}} = data
+      assert %{"valid" => true, "request" => ^deserialized_input, "response" => "OK"} = data
 
-      H.spit :mnesia.all_keys(Pedro.Db.EntryQueue)
-
-      H.todo "Test actual db interaction"
+      assert [row] = EQ.all
+      assert ^deserialized_input = Poison.decode!(row.json_payload)
     end
   end
 
   test "GET /request" do
     in_test_transaction do
-      input = %{WIP: true, message: "work in progress"}
+      input = %{WIP: "true", message: "work in progress"}  # booleans on query string come as text!
+      deserialized_input = input |> Poison.encode! |> Poison.decode!
 
       conn = signed_get build_conn(), "/request", input
       data = assert_valid_json(conn)
-      assert %{"valid" => true, "request" => %{"WIP" => "true", "message" => "work in progress"}} = data
+      assert %{"valid" => true, "request" => ^deserialized_input, "response" => "OK"} = data
 
-      H.todo "Test actual db interaction"
+      assert [row] = EQ.all
+      assert ^deserialized_input = Poison.decode!(row.json_payload)
     end
   end
 end

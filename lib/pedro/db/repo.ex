@@ -1,6 +1,6 @@
 require Pedro.Helpers, as: H
 
-defmodule Pedro.Db do
+defmodule Pedro.Db.Repo do
 
   @moduledoc """
   Helpers to interact with Mnesia in single node mode.
@@ -54,7 +54,45 @@ defmodule Pedro.Db do
     end
   end
 
-  def read(table, key) do
-    :mnesia.read({table, key})
+  def select(table, spec) do
+    :mnesia.select(table, spec)
+    |> Enum.map(&(record2struct(table, &1)))
   end
+
+  # :ets.fun2ms(fn(x)-> x end)
+  def all(table), do: select(table, [{:"$1", [], [:"$1"]}])
+
+  def write(struct) when is_map(struct) do
+    struct |> struct2record |> :mnesia.write
+  end
+
+  defp struct2record(struct) do
+    module = struct.__struct__
+    struct
+    |> Map.from_struct  # remove struct's name
+    |> Map.values
+    |> List.insert_at(0, module)
+    |> List.to_tuple
+  end
+
+  defp record2struct(module, record) do
+    module
+    |> module2attributes
+    |> List.insert_at(0, :__struct__)
+    |> Enum.zip(Tuple.to_list(record))  # zip struct's keys with record's values
+    |> attributes2struct(module)
+  end
+
+  def module2attributes(module) do
+    module.__struct__  # an empty struct
+    |> Map.from_struct  # remove struct's name
+    |> Map.keys
+  end
+
+  defp attributes2struct(attributes, module) do
+    attributes
+    |> List.insert_at(0, {:__struct__, module})  # add struct's name
+    |> Enum.into(%{})  # to struct
+  end
+
 end
