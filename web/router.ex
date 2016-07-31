@@ -20,6 +20,8 @@ defmodule Pedro.Router do
     pipe_through :signed
     post "/request", RequestController, :request
     get "/request", RequestController, :request
+    post "/inbox/put", InboxController, :put
+    get "/inbox/put", InboxController, :put
   end
 
   # def log_validation_error(conn, error) do
