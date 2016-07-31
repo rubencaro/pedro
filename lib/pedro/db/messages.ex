@@ -7,7 +7,7 @@ defmodule Pedro.Db.Messages do
   @moduledoc """
   Helpers to work with the Messages table
   """
-  defstruct [:__id__, :received_ts, :target_ts, :deliver_ts, :json_payload]
+  defstruct [:__id__, :from, :to, :received_ts, :target_ts, :deliver_ts, :json_payload]
 
   def table_definition do
     [ name: Messages,
@@ -15,6 +15,10 @@ defmodule Pedro.Db.Messages do
   end
 
   def select(spec), do: Repo.select(Messages, spec)
+
+  # :ets.fun2ms(fn(x = {_, _, _, _, _, _, _, who})-> x end)
+  def to(who),
+    do: select([{{:_, :_, :_, :_, :_, :_, :_, who}, [], [:"$_"]}])
 
   def all, do: Repo.all(Messages)
 
@@ -24,6 +28,8 @@ defmodule Pedro.Db.Messages do
          received_ts: now,
          target_ts: now,
          deliver_ts: now,
+         from: request[:from],
+         to: request[:to],
          json_payload: Poison.encode!(request) }
     |> Repo.write
   end

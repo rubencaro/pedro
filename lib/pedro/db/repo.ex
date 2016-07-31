@@ -54,16 +54,29 @@ defmodule Pedro.Db.Repo do
     end
   end
 
+  # Use `:ets.fun2ms` to get the spec
   def select(table, spec) do
     :mnesia.select(table, spec)
+    |> Enum.map(&(record2struct(table, &1)))
+  end
+
+  # Use `:ets.fun2ms` to get the spec
+  def dirty_select(table, spec) do
+    :mnesia.dirty_select(table, spec)
     |> Enum.map(&(record2struct(table, &1)))
   end
 
   # :ets.fun2ms(fn(x)-> x end)
   def all(table), do: select(table, [{:"$1", [], [:"$1"]}])
 
+  def dirty_all(table), do: dirty_select(table, [{:"$1", [], [:"$1"]}])
+
   def write(struct) when is_map(struct) do
     struct |> struct2record |> :mnesia.write
+  end
+
+  def dirty_write(struct) when is_map(struct) do
+    struct |> struct2record |> :mnesia.dirty_write
   end
 
   defp struct2record(struct) do

@@ -20,6 +20,7 @@ defmodule Pedro.Router do
     pipe_through :signed
     post "/request", RequestController, :request
     get "/request", RequestController, :request
+    get "/inbox", InboxController, :inbox
     post "/inbox/put", InboxController, :put
     get "/inbox/put", InboxController, :put
   end
