@@ -70,13 +70,8 @@ defmodule Pedro.InboxControllerTest do
         |> assert_valid_json
       assert %{"valid" => true, "request" => ^deserialized_req, "response" => rows} = data
 
-      rows
-      |> H.spit
-
-      # assert Enum.count(rows) == 3
-      assert Enum.all?(rows, fn(r)-> %{to: "you"} = r end)
-
-      H.todo
+      assert Enum.count(rows) == 3
+      assert Enum.all?(rows, fn(r)-> match?(%{"to" => "you"}, r) end)
     end
   end
 

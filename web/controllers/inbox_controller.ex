@@ -14,7 +14,7 @@ defmodule Pedro.InboxController do
   defp generate_inbox_response(params) do
     request = params |> Map.drop(["signature"])
 
-    %{valid: true, request: request, response: Messages.to(params[:to])}
+    %{valid: true, request: request, response: Messages.to(params["to"])}
   end
 
   def put(conn, params) do

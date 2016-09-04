@@ -28,8 +28,8 @@ defmodule Pedro.Db.Messages do
          received_ts: now,
          target_ts: now,
          deliver_ts: now,
-         from: request[:from],
-         to: request[:to],
+         from: request["from"],
+         to: request["to"],
          json_payload: Poison.encode!(request) }
     |> Repo.write
   end
