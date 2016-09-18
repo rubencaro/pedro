@@ -36,6 +36,7 @@ defmodule Pedro.Mixfile do
      {:bottler, github: "rubencaro/bottler"},
      {:cipher, ">= 1.1.2"},
      {:harakiri, ">= 1.0.2"},
+     {:credo, "~> 0.4", only: [:dev, :test]},
      {:poolboy, "~> 1.5"}]
   end
 
