@@ -5,7 +5,8 @@ defmodule Pedro.Db.Throttles do
   """
 
   def table_definition do
-    [ name: Pedro.Db.Throttles,
+    [
+      name: Pedro.Db.Throttles,
       opts: [
         attributes: [:key, :since_ts, :consumed, :period]
       ]

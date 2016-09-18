@@ -56,13 +56,15 @@ defmodule Pedro.Db.Repo do
 
   # Use `:ets.fun2ms` to get the spec
   def select(table, spec) do
-    :mnesia.select(table, spec)
+    table
+    |> :mnesia.select(spec)
     |> Enum.map(&(record2struct(table, &1)))
   end
 
   # Use `:ets.fun2ms` to get the spec
   def dirty_select(table, spec) do
-    :mnesia.dirty_select(table, spec)
+    table
+    |> :mnesia.dirty_select(spec)
     |> Enum.map(&(record2struct(table, &1)))
   end
 

@@ -10,8 +10,8 @@ defmodule Pedro.Db.Messages do
   defstruct [:__id__, :from, :to, :received_ts, :target_ts, :deliver_ts, :json_payload]
 
   def table_definition do
-    [ name: Messages,
-      opts: [ attributes: Repo.module2attributes(Messages) ] ]
+    [name: Messages,
+     opts: [attributes: Repo.module2attributes(Messages)]]
   end
 
   def select(spec), do: Repo.select(Messages, spec)
@@ -24,13 +24,13 @@ defmodule Pedro.Db.Messages do
 
   def insert(request) do
     now = H.ts(:nano)
-    %Messages{ __id__: now,
-         received_ts: now,
-         target_ts: now,
-         deliver_ts: now,
-         from: request["from"],
-         to: request["to"],
-         json_payload: Poison.encode!(request) }
+    %Messages{__id__: now,
+              received_ts: now,
+              target_ts: now,
+              deliver_ts: now,
+              from: request["from"],
+              to: request["to"],
+              json_payload: Poison.encode!(request)}
     |> Repo.write
   end
 

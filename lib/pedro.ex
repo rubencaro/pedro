@@ -1,15 +1,18 @@
 require Pedro.Helpers, as: H
 
 defmodule Pedro do
+  @moduledoc """
+    Main application module.
+  """
   use Application
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
     # respond to harakiri restarts
-    tmp_path = H.env(:tmp_path, "tmp") |> Path.expand
-    Harakiri.add %{ paths: ["#{tmp_path}/restart"],
-                    action: :restart }, create_paths: true
+    tmp_path = :tmp_path |> H.env("tmp") |> Path.expand
+    Harakiri.add %{paths: ["#{tmp_path}/restart"],
+                   action: :restart}, create_paths: true
 
     :ok = Pedro.Db.Repo.init
 
@@ -37,9 +40,11 @@ defmodule Pedro do
     # register the name if asked
     if opts[:name], do: Process.register(self,opts[:name])
 
-    tmp_path = H.env(:tmp_path, "tmp") |> Path.expand
-    :os.cmd 'touch #{tmp_path}/alive'
     :timer.sleep 5_000
+    tmp_path = :tmp_path |> H.env("tmp") |> Path.expand
+    {_, _, version} = Application.started_applications |> Enum.find(&match?({:pedro, _, _}, &1))
+    "echo '#{version}' > #{tmp_path}/alive" |> to_charlist |> :os.cmd
     alive_loop
   end
+
 end

@@ -19,8 +19,8 @@ defmodule Pedro.Helpers do
     quote do
       %{file: file, line: line} = __ENV__
       name = Process.info(self)[:registered_name]
-      chain = [ :bright, :red, "\n\n#{file}:#{line}",
-                :normal, "\n     #{inspect self}", :green," #{name}"]
+      chain = [:bright, :red, "\n\n#{file}:#{line}",
+               :normal, "\n     #{inspect self}", :green," #{name}"]
 
       msg = inspect(unquote(obj),unquote(inspect_opts))
 
@@ -30,7 +30,7 @@ defmodule Pedro.Helpers do
 
       # chain = chain ++ [:yellow, "\n\n#{inspect Process.info(self)}"]
 
-      (chain ++ ["\n\n", :reset]) |> IO.ANSI.format(true) |> IO.puts
+      chain |> Kernel.++(["\n\n", :reset]) |> IO.ANSI.format(true) |> IO.puts
 
       unquote(obj)
     end
@@ -42,7 +42,7 @@ defmodule Pedro.Helpers do
   defmacro todo(msg \\ "") do
     quote do
       %{file: file, line: line} = __ENV__
-      [ :yellow, "\nTODO: #{file}:#{line} #{unquote(msg)}\n", :reset]
+      [:yellow, "\nTODO: #{file}:#{line} #{unquote(msg)}\n", :reset]
       |> IO.ANSI.format(true)
       |> IO.puts
       :todo

@@ -10,8 +10,8 @@ defmodule Pedro.Db.EntryQueue do
   defstruct [:__id__, :received_ts, :target_ts, :adapter, :options, :json_payload]
 
   def table_definition do
-    [ name: EQ,
-      opts: [ attributes: Repo.module2attributes(EQ) ] ]
+    [name: EQ,
+     opts: [attributes: Repo.module2attributes(EQ)]]
   end
 
   def select(spec), do: Repo.select(EQ, spec)
@@ -20,12 +20,12 @@ defmodule Pedro.Db.EntryQueue do
 
   def insert(request) do
     now = H.ts(:nano)
-    %EQ{ __id__: now,
-         received_ts: now,
-         target_ts: now,
-         adapter: Pedro.Adapter,
-         options: [],
-         json_payload: Poison.encode!(request) }
+    %EQ{__id__: now,
+        received_ts: now,
+        target_ts: now,
+        adapter: Pedro.Adapter,
+        options: [],
+        json_payload: Poison.encode!(request)}
     |> Repo.write
   end
 
