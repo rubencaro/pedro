@@ -22,3 +22,8 @@ Pedro uses `Phoenix` to get web services, such as the notification reception and
 It uses `Mnesia` to persist data.
 
 It uses `Bottler`/`Harakiri` for deploying tasks.
+
+## TODOs
+
+* Use https://github.com/klarna/mnesia_eleveldb
+
